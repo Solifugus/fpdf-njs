@@ -1,0 +1,25 @@
+{
+  "name": "fpdf-njs",
+  "version": "1.0.0",
+  "description": "Create PDF documents from primitives.",
+  "main": "example.js",
+  "scripts": {
+    "test": "node example.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/matheuseduardo/fpdf-asp.git"
+  },
+  "keywords": [
+    "PDF"
+  ],
+  "author": "Matthew C. Tedder",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/matheuseduardo/fpdf-asp/issues"
+  },
+  "homepage": "https://github.com/matheuseduardo/fpdf-asp#readme",
+  "dependencies": {
+    "sprintf-js": "^1.1.1"
+  }
+}
