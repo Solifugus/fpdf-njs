@@ -1,5 +1,5 @@
 function FPDF(xres) {
-	this.Version = "1.02 beta"
+	this.Version = "1.00 beta"
 	var PATH;
 	this.sprintf = require("sprintf-js").sprintf;
 	this.fs = require('fs');

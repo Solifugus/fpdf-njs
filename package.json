@@ -1,7 +1,7 @@
 {
   "name": "fpdf-njs",
   "version": "1.0.0",
-  "description": "Create PDF documents from primitives.",
+  "description": "Create PDF documents from primitives, same as for PHP's FPDF.  This is translated from the work of previous authors.  See README.md for details.",
   "main": "example.js",
   "scripts": {
     "test": "node example.js"
@@ -13,12 +13,12 @@
   "keywords": [
     "PDF"
   ],
-  "author": "Matthew C. Tedder",
+  "author": "Matthew C. Tedder <matthewct@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/matheuseduardo/fpdf-asp/issues"
+    "url": "https://github.com/Solifugus/fpdf-njs/issues"
   },
-  "homepage": "https://github.com/matheuseduardo/fpdf-asp#readme",
+  "homepage": "https://github.com/Solifugus/fpdf-njs#readme",
   "dependencies": {
     "sprintf-js": "^1.1.1"
   }
