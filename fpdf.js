@@ -1,9 +1,18 @@
+// Helper function for type checking
+function is_string(value) {
+	return typeof value === 'string';
+}
+
 function FPDF(xres) {
 	this.Version = "1.00 beta"
 	var PATH;
-	this.sprintf = require("sprintf-js").sprintf;
+	const lib = require('./lib');
+	const { gzcompress } = require('./lib/compression');
+	this.sprintf = lib.sprintf;
 	this.fs = require('fs');
+	this.gzcompress = gzcompress;
 	this.function_exists = function function_exists(name) {
+		if (name === 'gzcompress') return true;
 		return false;
 	}
 	this.res = xres;
@@ -141,7 +150,7 @@ function FPDF(xres) {
 		else if (xunit == "in") this.k = 72;
 		else
 			this.Error("Incorrect unit: " + xunit);
-		if (xformat.constructor == String) {
+		if (typeof xformat === 'string') {
 			xformat = xformat.toLowerCase();
 			if (xformat == "a3") xformat = new Array(841.89, 1190.55);
 			else if (xformat == "a4") xformat = new Array(595.28, 841.89);
@@ -171,7 +180,7 @@ function FPDF(xres) {
 		this.CurOrientation = this.DefOrientation;
 		this.w = this.wPt / this.k;
 		this.h = this.hPt / this.k;
-		xmargin = 28.35 / this.k;
+		var xmargin = 28.35 / this.k;
 		this.SetMargins(xmargin, xmargin);
 		this.cMargin = xmargin / 10;
 		this.LineWidth = .567 / this.k;
@@ -270,14 +279,14 @@ function FPDF(xres) {
 		if (arguments.length < 1) {
 			xorientation = ""
 		};
-		xfamily = this.FontFamily;
-		xstyle = this.FontStyle + (this.underline ? "U" : "");
-		xsize = this.FontSizePt;
-		xlw = this.LineWidth;
-		xdc = this.DrawColor;
-		xfc = this.FillColor;
-		xtc = this.TextColor;
-		xcf = this.ColorFlag;
+		var xfamily = this.FontFamily;
+		var xstyle = this.FontStyle + (this.underline ? "U" : "");
+		var xsize = this.FontSizePt;
+		var xlw = this.LineWidth;
+		var xdc = this.DrawColor;
+		var xfc = this.FillColor;
+		var xtc = this.TextColor;
+		var xcf = this.ColorFlag;
 		if (this.page > 0) {
 			this.InFooter = true;
 			this.Footer();
@@ -382,7 +391,7 @@ function FPDF(xres) {
 		if (arguments.length < 5) {
 			xphase = 0
 		}
-		xstring = "";
+		var xstring = "";
 		if (xwidth > 0) {
 			xstring += xwidth + " w";
 		}
@@ -396,9 +405,8 @@ function FPDF(xres) {
 		}
 		if (lib.is_array(xdash)) {
 			xstring += " [";
-			for (xlen in xdash) {
-				xlen = xdash[xlen]
-				xstring += " " + xlen;
+			for (let i = 0; i < xdash.length; i++) {
+				xstring += " " + xdash[i];
 			}
 			xstring += " ] " + xphase + ' d';
 		}
@@ -435,13 +443,51 @@ function FPDF(xres) {
 		if (this.fonts[xfamily + xstyle]) this.Error("Font already added: " + xfamily + " " + xstyle);
 		if (xfile == "") xfile = lib.str_replace(" ", "", xfamily) + xstyle.toLowerCase() + ".js";
 		xfile = this.FONTPATH + xfile;
-		eval(lib.readtextfile(xfile));
+
+		// Load font definition safely using require()
+		var fontDef;
+		try {
+			fontDef = require(xfile);
+		} catch (err) {
+			this.Error("Could not load font definition file: " + xfile + " - " + err.message);
+		}
+
+		// Handle new format: font definition object
+		var xname, xtype, xdesc, xup, xut, xcw, xenc, xdiff, xsize1, xsize2, xoriginalsize;
+		if (fontDef && typeof fontDef === 'object' && !Array.isArray(fontDef)) {
+			xname = fontDef.name;
+			xtype = fontDef.type || 'core';
+			xdesc = fontDef.desc || {};
+			xup = fontDef.up || -100;
+			xut = fontDef.ut || 50;
+			xcw = fontDef.cw;
+			xenc = fontDef.enc || 'cp1252';
+			xdiff = fontDef.diff || null;
+			xsize1 = fontDef.size1;
+			xsize2 = fontDef.size2;
+			xoriginalsize = fontDef.originalsize;
+		} else if (Array.isArray(fontDef)) {
+			// Legacy format: just character widths array
+			// Create minimal font definition for core fonts
+			xname = xfamily.charAt(0).toUpperCase() + xfamily.slice(1);
+			if (xstyle) xname += "-" + (xstyle === "B" ? "Bold" : xstyle === "I" ? "Italic" : xstyle === "BI" ? "BoldItalic" : xstyle);
+			xtype = 'core';
+			xdesc = {};
+			xup = -100;
+			xut = 50;
+			xcw = fontDef;
+			xenc = 'cp1252';
+			xdiff = null;
+		} else {
+			this.Error("Invalid font definition format in file: " + xfile);
+		}
+
 		if (!lib.isset(xname)) this.Error("Could not include font definition file");
-		xi = lib.count(this.fonts) + 1;
+		var xi = lib.count(this.fonts) + 1;
 		this.fonts[xfamily + xstyle] = lib.newArray("i", xi, "type", xtype, "name", xname, "desc", xdesc, "up", xup, "ut", xut, "cw", xcw, "enc", xenc, "file", xfile);
 		if (xdiff) {
-			xd = 0;
-			xnb = lib.count(this.diffs);
+			var xd = 0;
+			var xnb = lib.count(this.diffs);
 			for (xi = 1; xi <= xnb; xi++)
 				if (this.diffs[xi] == xdiff) {
 					xd = xi;
@@ -466,7 +512,7 @@ function FPDF(xres) {
 		if (arguments.length < 3) {
 			xsize = 0
 		};
-		var xfpdf_charwidths = new Array();
+		var xfpdf_charwidths = {};
 		xfamily = xfamily.toLowerCase();
 		if (xfamily == "")      xfamily = this.FontFamily;
 		if (xfamily == "arial") xfamily = "helvetica";
@@ -475,13 +521,13 @@ function FPDF(xres) {
 		xstyle = xstyle.toUpperCase();
 		if (xstyle.indexOf("U") !== -1) {
 			this.underline    = true;
-			xstyle            = xstyle.reaplce(/U/g, '');
+			xstyle            = xstyle.replace(/U/g, '');
 		} else this.underline = false;
 
 		if (xstyle == "IB") xstyle = "BI";
 		if (xsize == 0) xsize = this.FontSizePt;
 		if (this.FontFamily == xfamily && this.FontStyle == xstyle && this.FontSizePt == xsize) return;
-		xfontkey = xfamily + xstyle;
+		var xfontkey = xfamily + xstyle;
 
 		// Ensure we know courier font widths
 		if (xfontkey === 'courier') {
@@ -496,7 +542,7 @@ function FPDF(xres) {
 		if (!this.fonts[xfontkey]) {
 			if (this.CoreFonts[xfontkey]) {
 				if (!xfpdf_charwidths[xfontkey]) {
-					xfile = xfamily;
+					var xfile = xfamily;
 					if (xfamily == "times" || xfamily == "helvetica") xfile += xstyle.toLowerCase();
 					xfile = this.FONTPATH + xfile + ".js";
 
@@ -965,7 +1011,7 @@ function FPDF(xres) {
 					if (lib.is_string(xpl[4])) xannots += "/A <</S /URI /URI " + this._textstring(xpl[4]) + ">>>>";
 					else {
 						xl = this.links[xpl[4]];
-						xh = (this.OrientationChanges[xl.charAt(0)] ? xwPt : xhPt);
+						xh = (this.OrientationChanges[xl[0]] ? xwPt : xhPt);
 						xannots += this.sprintf("/Dest [%d 0 R /XYZ 0 %.2f null]>>", 1 + 2 * xl[0], xh - xl[1] * this.k);
 					}
 				}
@@ -1099,7 +1145,7 @@ function FPDF(xres) {
 			this._out("endobj");
 			if (xinfo["cs"] == "Indexed") {
 				this._newobj();
-				xpal = (this.compress) ? gzcompress(xinfo["pal"]) :
+				xpal = (this.compress) ? this.gzcompress(xinfo["pal"]) :
 					xinfo["pal"];
 				this._out("<<" + xfilter + "/Length " + lib.strlen(xpal) + ">>");
 				this._putstream(xpal);
@@ -1241,18 +1287,41 @@ function FPDF(xres) {
 	}
 
 	this._parsejpg = function _parsejpg(xfile) {
-		xa = new cImage();
-		xa.Open(xfile);
-		if (!xa) this.Error("Missing or incorrect image file: " + xfile);
-		if (xa["id"] != 2) this.Error("Not a JPEG file: " + xfile);
-		if (!lib.isset(xa["channels"]) || xa["channels"] == 3) xcolspace = "DeviceRGB";
-		else if (xa["channels"] == 4) xcolspace = "DeviceCMYK";
-		else xcolspace = "DeviceGray";
-		xbpc = (xa["bits"] ? xa["bits"] : 8);
-		xdata = xa.GetBuffer()
-		size = xa.size;
-		xa.Close();
-		return lib.newArray("w", xa["width"], "h", xa["height"], "cs", xcolspace, "bpc", xbpc, "f", "DCTDecode", "data", xdata, "size", size);
+		const ImageParser = require('./lib/image');
+		var xa = new ImageParser();
+
+		if (!xa.open(xfile)) {
+			this.Error("Missing or incorrect image file: " + xfile);
+		}
+
+		if (xa.id != 2) {
+			this.Error("Not a JPEG file: " + xfile);
+		}
+
+		// Determine color space based on channels
+		var xcolspace;
+		if (!lib.isset(xa.channels) || xa.channels == 3) {
+			xcolspace = "DeviceRGB";
+		} else if (xa.channels == 4) {
+			xcolspace = "DeviceCMYK";
+		} else {
+			xcolspace = "DeviceGray";
+		}
+
+		var xbpc = xa.bits || 8;
+		var xdata = xa.getBuffer();
+		var size = xa.size;
+		xa.close();
+
+		return lib.newArray(
+			"w", xa.width,
+			"h", xa.height,
+			"cs", xcolspace,
+			"bpc", xbpc,
+			"f", "DCTDecode",
+			"data", xdata,
+			"size", size
+		);
 	}
 
 	this._textstring = function _textstring(xs) {
@@ -1305,23 +1374,45 @@ function FPDF(xres) {
 	}
 
 	this._LoadExtension = function _LoadExtension(path) {
-		eval(lib.readtextfile(path));
+		const { loadExtension } = require('./lib/extension');
+		loadExtension(this, path);
 	}
 
-	this.LoadExtension = function LoadExtends(path) {
+	this.LoadExtension = function LoadExtension(path) {
 		this._LoadExtension(this.EXTENDSPATH + path + ".ext");
 	}
+
 	this.LoadModels = function LoadModels(path) {
 		this._LoadExtension(this.MODELSPATH + path + ".mod");
 	}
+
+	// ExtendsCode is deprecated - extensions should use extendMethod from lib/extension instead
+	// Keeping this for backward compatibility but it will log a warning
 	this.ExtendsCode = function ExtendsCode(AddTo, CodeAdd) {
-		Code = new String(eval("this." + AddTo));
-		CodeAdd = new String(CodeAdd);
-		pI = CodeAdd.indexOf("{") + 1;
-		pE = CodeAdd.lastIndexOf("}")
-		sToAdd = CodeAdd.substring(pI, pE)
-		pE = Code.lastIndexOf("}")
-		eval("this." + AddTo + "=" + Code.substring(0, pE) + "\n" + sToAdd + "}");
+		console.warn('ExtendsCode is deprecated. Extensions should use extendMethod from lib/extension instead.');
+		const { extendMethod } = require('./lib/extension');
+
+		// Extract the code to add from the function
+		var codeStr = String(CodeAdd);
+		var bodyStart = codeStr.indexOf("{") + 1;
+		var bodyEnd = codeStr.lastIndexOf("}");
+		var codeToAdd = codeStr.substring(bodyStart, bodyEnd).trim();
+
+		// Create a wrapper that executes the original method then the added code
+		var self = this;
+		extendMethod(this, AddTo, function(original) {
+			// Call original method
+			var result = original.apply(this, Array.prototype.slice.call(arguments, 1));
+			// Execute the added code in context
+			try {
+				// Use Function constructor instead of eval (safer)
+				var addedFunc = new Function(codeToAdd);
+				addedFunc.call(this);
+			} catch (err) {
+				console.error('Error executing extended code:', err);
+			}
+			return result;
+		});
 	}
 }
 

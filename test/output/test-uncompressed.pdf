@@ -1,0 +1,80 @@
+%PDF-1.3
+3 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/Contents 4 0 R>>
+endobj
+4 0 obj
+<</Length 641>>
+stream
+2 J
+0.57 w
+BT /F1 12.00 Tf ET
+BT 31.19 795.77 Td (Line 1 with some text to compress) Tj ET
+BT 31.19 767.42 Td (Line 2 with some text to compress) Tj ET
+BT 31.19 739.07 Td (Line 3 with some text to compress) Tj ET
+BT 31.19 710.73 Td (Line 4 with some text to compress) Tj ET
+BT 31.19 682.38 Td (Line 5 with some text to compress) Tj ET
+BT 31.19 654.03 Td (Line 6 with some text to compress) Tj ET
+BT 31.19 625.69 Td (Line 7 with some text to compress) Tj ET
+BT 31.19 597.34 Td (Line 8 with some text to compress) Tj ET
+BT 31.19 569.00 Td (Line 9 with some text to compress) Tj ET
+BT 31.19 540.65 Td (Line 10 with some text to compress) Tj ET
+
+endstream
+endobj
+1 0 obj
+<</Type /Pages
+/Kids [3 0 R ]
+/Count 1
+/MediaBox [0 0 595.28 841.89]
+>>
+endobj
+5 0 obj
+<</Type /Font
+/BaseFont /Helvetica
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+>>
+endobj
+2 0 obj
+<</ProcSet [/PDF /Text /ImageB /ImageC /ImageI]
+/Font <<
+/F1 5 0 R
+>>
+>>
+endobj
+6 0 obj
+<<
+/Producer (FPDF for Node.js v.1.00 beta [more at https://github.com/Solifugus/fpdf-njs/wiki)
+/CreationDate (D:20251211015734)
+>>
+endobj
+7 0 obj
+<<
+/Type /Catalog
+/Pages 1 0 R
+/OpenAction [3 0 R /FitH null]
+/PageLayout /OneColumn
+>>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000777 00000 n 
+0000000960 00000 n 
+0000000009 00000 n 
+0000000087 00000 n 
+0000000864 00000 n 
+0000001048 00000 n 
+0000001195 00000 n 
+trailer
+<<
+/Size 8
+/Root 7 0 R
+/Info 6 0 R
+>>
+startxref
+1298
+%%EOF

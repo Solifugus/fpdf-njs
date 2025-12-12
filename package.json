@@ -4,7 +4,10 @@
   "description": "Create PDF documents from primitives, same as for PHP's FPDF.  This is translated from the work of previous authors.  See README.md for details.",
   "main": "example.js",
   "scripts": {
-    "test": "node example.js"
+    "test": "node test/run-all.js",
+    "test:lib": "node test/lib.test.js",
+    "test:core": "node test/core.test.js",
+    "example": "node example.js"
   },
   "repository": {
     "type": "git",
