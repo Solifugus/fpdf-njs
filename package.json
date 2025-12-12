@@ -1,8 +1,8 @@
 {
   "name": "fpdf-njs",
-  "version": "1.0.0",
-  "description": "Create PDF documents from primitives, same as for PHP's FPDF.  This is translated from the work of previous authors.  See README.md for details.",
-  "main": "example.js",
+  "version": "2.0.0",
+  "description": "Lightweight PDF generation for Node.js. Port of FPDF with zero eval(), built-in compression, JPEG support, and comprehensive testing. Minimal dependencies.",
+  "main": "fpdf.js",
   "scripts": {
     "test": "node test/run-all.js",
     "test:lib": "node test/lib.test.js",
@@ -11,10 +11,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/matheuseduardo/fpdf-asp.git"
+    "url": "git+https://github.com/Solifugus/fpdf-njs.git"
   },
   "keywords": [
-    "PDF"
+    "pdf",
+    "pdf-generation",
+    "fpdf",
+    "document",
+    "compression",
+    "jpeg",
+    "image",
+    "nodejs",
+    "lightweight"
   ],
   "author": "Matthew C. Tedder <matthewct@gmail.com>",
   "license": "MIT",
@@ -24,5 +32,8 @@
   "homepage": "https://github.com/Solifugus/fpdf-njs#readme",
   "dependencies": {
     "sprintf-js": "^1.1.1"
+  },
+  "engines": {
+    "node": ">=12.0.0"
   }
 }
